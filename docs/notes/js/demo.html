@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>async/await 同步异步演示</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f7fa;
+            color: #333;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .explanation {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .demo-area {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .code-block {
+            background: #2d3436;
+            color: #dfe6e9;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            line-height: 1.5;
+        }
+        .console {
+            background: #1e272e;
+            color: #05c46b;
+            padding: 15px;
+            border-radius: 6px;
+            min-height: 150px;
+            font-family: 'Courier New', monospace;
+            overflow-y: auto;
+            max-height: 300px;
+        }
+        .console-line {
+            margin: 5px 0;
+        }
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #2980b9;
+        }
+        .highlight {
+            background: #f1c40f;
+            color: #2c3e50;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        .key-points {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .point-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .point-card h3 {
+            color: #3498db;
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>async/await 同步与异步特性</h1>
+        
+        <div class="explanation">
+            <p><span class="highlight">async/await</span> 允许我们以同步的方式编写异步代码，但其本质仍然是异步的：</p>
+            <ul>
+                <li>遇到 <span class="highlight">await</span> 时，函数会暂停执行</li>
+                <li>控制权返回给调用者</li>
+                <li>等待的 Promise 解决后，函数从暂停处恢复执行</li>
+                <li>整个过程不会阻塞主线程</li>
+            </ul>
+        </div>
+        
+        <div class="demo-area">
+            <h2>执行演示</h2>
+            <div class="code-block">
+async function demoAsync() {
+    console.log("[1] async函数开始");
+    
+    console.log("[2] 等待前...");
+    const result = await new Promise(resolve => {
+        setTimeout(() => {
+            console.log("[4] Promise解决");
+            resolve("完成!");
+        }, 2000);
+    });
+    
+    console.log(`[5] 获取结果: ${result}`);
+    return result;
+}
+
+console.log("[A] 调用前");
+demoAsync().then(res => console.log(`[6] then回调: ${res}`));
+console.log("[B] 调用后");
+            </div>
+            
+            <div class="controls">
+                <button id="runBtn">运行代码</button>
+                <button id="resetBtn">重置</button>
+            </div>
+            
+            <div class="console" id="consoleOutput">
+                <!-- 输出将显示在这里 -->
+            </div>
+        </div>
+        
+        <div class="key-points">
+            <div class="point-card">
+                <h3>同步特性</h3>
+                <ul>
+                    <li>代码按顺序书写</li>
+                    <li>可使用 try/catch 处理错误</li>
+                    <li>避免回调地狱</li>
+                    <li>逻辑更清晰</li>
+                </ul>
+            </div>
+            <div class="point-card">
+                <h3>异步本质</h3>
+                <ul>
+                    <li>返回 Promise 对象</li>
+                    <li>不阻塞主线程</li>
+                    <li>await 暂停但不阻塞</li>
+                    <li>后续代码放入微任务队列</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const consoleOutput = document.getElementById('consoleOutput');
+        const runBtn = document.getElementById('runBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        
+        function logToConsole(message) {
+            const line = document.createElement('div');
+            line.className = 'console-line';
+            line.textContent = message;
+            consoleOutput.appendChild(line);
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
+        }
+        
+        async function demoAsync() {
+            logToConsole("[1] async函数开始");
+            
+            logToConsole("[2] 等待前...");
+            const result = await new Promise(resolve => {
+                setTimeout(() => {
+                    logToConsole("[4] Promise解决");
+                    resolve("完成!");
+                }, 2000);
+            });
+            
+            logToConsole(`[5] 获取结果: ${result}`);
+            return result;
+        }
+        
+        runBtn.addEventListener('click', () => {
+            consoleOutput.innerHTML = '';
+            
+            logToConsole("[A] 调用前");
+            demoAsync().then(res => logToConsole(`[6] then回调: ${res}`));
+            logToConsole("[B] 调用后");
+        });
+        
+        resetBtn.addEventListener('click', () => {
+            consoleOutput.innerHTML = '';
+        });
+    </script>
+</body>
+</html>

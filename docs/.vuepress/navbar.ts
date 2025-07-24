@@ -13,6 +13,9 @@ export default defineNavbarConfig([
   { text: '归档', link: '/blog/archives/' },
   {
     text: '笔记',
-    items: [{ text: '示例', link: '/notes/demo/README.md' }]
+    items: [
+      { text: 'js', link: '/notes/js/README.md' },
+      { text:'朝花夕拾', link:'/notes/oneliner/README.md'}
+    ]
   },
 ])
